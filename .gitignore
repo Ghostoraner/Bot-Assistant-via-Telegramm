@@ -136,6 +136,14 @@ ENV/
 env.bak/
 venv.bak/
 
+# IDE (PyCharm)
+.idea/
+
+# Дополнительные файлы локальных баз данных
+*.db
+*.sqlite
+*.sqlite3
+
 # Spyder project settings
 .spyderproject
 .spyproject
