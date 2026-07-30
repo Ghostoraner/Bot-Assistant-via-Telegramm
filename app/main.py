@@ -3,7 +3,7 @@ import logging
 from aiogram import Bot, Dispatcher
 from app.config import BOT_TOKEN
 
-# Імпортуємо всі наші роутери
+
 from app.handlers.menu import menu_router
 from app.handlers.ai_chat import ai_router
 from app.handlers.job_search import job_router
