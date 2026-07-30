@@ -19,5 +19,5 @@ if not MYSQL_URL:
     missing_vars.append("MYSQL_URL")
 
 if missing_vars:
-    logging.critical(f"Критичні змінні оточення відсутні: {', '.join(missing_vars)}")
+    logging.critical(f"Critical environment variables are missing: {', '.join(missing_vars)}")
     sys.exit(1)
