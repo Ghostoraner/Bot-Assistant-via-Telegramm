@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 ai_router = Router()
 
-# Ініціалізація асинхронного клієнта Groq без жорстко прописаного ключа
+
 groq_client = AsyncGroq(api_key=os.getenv("GROQ_API_KEY"))
 
 
@@ -30,7 +30,7 @@ def get_ai_kb(lang: str) -> ReplyKeyboardMarkup:
     )
 
 
-# Вхід у режим AI
+
 @ai_router.message(F.text.in_([MESSAGES["ru"]["btn_ai"], MESSAGES["en"]["btn_ai"]]))
 async def enter_ai_mode(message: Message, state: FSMContext):
     lang = await get_user_lang(message.from_user.id)
@@ -44,7 +44,7 @@ async def enter_ai_mode(message: Message, state: FSMContext):
     await message.answer(msg_text, reply_markup=get_ai_kb(lang), parse_mode="Markdown")
 
 
-# Вихід з режиму AI
+
 @ai_router.message(AIState.waiting_for_prompt, F.text.in_(["❌ Выйти из AI", "❌ Exit AI Mode"]))
 async def exit_ai_mode(message: Message, state: FSMContext):
     await state.clear()
@@ -55,10 +55,10 @@ async def exit_ai_mode(message: Message, state: FSMContext):
     )
 
 
-# Обробка запиту до Groq
+
 @ai_router.message(AIState.waiting_for_prompt)
 async def handle_ai_prompt(message: Message, state: FSMContext):
-    # Якщо натиснули головну кнопку меню замість тексту
+
     if message.text in [
         MESSAGES["ru"]["btn_jobs"], MESSAGES["en"]["btn_jobs"],
         MESSAGES["ru"]["btn_settings"], MESSAGES["en"]["btn_settings"],

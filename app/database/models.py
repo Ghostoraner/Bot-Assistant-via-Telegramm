@@ -10,7 +10,7 @@ class Base(DeclarativeBase):
 class User(Base):
     __tablename__ = 'users'
 
-    # Telegram ID зазвичай перевищує межі стандартного INT, тому BigInteger — це вірно
+
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=False)
     language: Mapped[str] = mapped_column(String(2), default="ru", nullable=False)
     notifications: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
@@ -22,7 +22,6 @@ class Task(Base):
     __tablename__ = 'tasks'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    # Змінено на BigInteger для коректного зв'язку з users.id
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     is_completed: Mapped[bool] = mapped_column(Boolean, default=False)
@@ -33,7 +32,6 @@ class Planer(Base):
     __tablename__ = 'planers'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    # Змінено на BigInteger для коректного зв'язку з users.id
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     due_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)

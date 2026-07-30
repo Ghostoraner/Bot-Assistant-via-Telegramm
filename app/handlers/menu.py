@@ -75,10 +75,10 @@ async def change_language(message: Message):
 
         await message.answer(
             get_msg(message.from_user.id, "lang_changed"),
-            reply_markup=get_settings_kb(new_lang)  # Оновлюємо кнопки в налаштуваннях
+            reply_markup=get_settings_kb(new_lang)
         )
 
-# ВОТ ТУТ ИСПРАВЛЕНИЕ: при кнопке Назад возвращаем Главное Меню!
+
 @menu_router.message(F.text.in_([MESSAGES["ru"]["btn_back"], MESSAGES["en"]["btn_back"]]))
 async def btn_back(message: Message, state: FSMContext):
     await state.clear()

@@ -9,7 +9,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 MYSQL_URL = os.getenv("MYSQL_URL")
 
-# Валідація наявності критичних змінних при старті (Fail-Fast)
+
 missing_vars = []
 if not BOT_TOKEN:
     missing_vars.append("BOT_TOKEN")

@@ -7,7 +7,7 @@ from app.config import BOT_TOKEN
 from app.handlers.menu import menu_router
 from app.handlers.ai_chat import ai_router
 from app.handlers.job_search import job_router
-from app.handlers.tasks_planner import tasks_planner_router  # <--- НОВИЙ РОУТЕР
+from app.handlers.tasks_planner import tasks_planner_router  #
 
 logging.basicConfig(level=logging.INFO)
 
@@ -15,9 +15,9 @@ async def main():
     bot = Bot(token=BOT_TOKEN)
     dp = Dispatcher()
 
-    # Порядок підключення роутерів ДУЖЕ важливий:
+
     dp.include_router(ai_router)
-    dp.include_router(tasks_planner_router)  # <--- Підключаємо сюди
+    dp.include_router(tasks_planner_router)
     dp.include_router(job_router)
     dp.include_router(menu_router)
 

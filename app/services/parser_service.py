@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
 
-# Ключові слова для фільтрації під кожен напрямок
+
 KEYWORDS_MAP: Dict[str, List[str]] = {
     "cpp": ["c++", "cpp", "embedded", "stm32", "microcontroller", "qt", "c language", "firmware", "arm", "esp32"],
     "mobile": ["flutter", "android", "ios", "react native", "swift", "kotlin", "mobile", "dart"],
@@ -35,7 +35,7 @@ class FreelanceService:
         }
 
     async def _fetch(self, session: aiohttp.ClientSession, url: str) -> Optional[str]:
-        """Універсальний завантажувач сторінок з таймаутом і залогованими помилками."""
+
         try:
             async with session.get(url, headers=self.headers, timeout=aiohttp.ClientTimeout(total=8)) as resp:
                 if resp.status == 200:
@@ -46,34 +46,31 @@ class FreelanceService:
         return None
 
     def _matches_category(self, text: str, category: str) -> bool:
-        """Перевіряє, чи містить текст хоча б одне ключове слово заданої категорії."""
+
         if not category or category.lower() == "all":
             return True
 
         cat_key = category.lower().strip()
 
-        # Знаходимо ключові слова або шукаємо прямо за назвою категорії
         keywords = KEYWORDS_MAP.get(cat_key, [cat_key])
 
         text_clean = html.unescape(text).lower()
 
         for kw in keywords:
-            # Використовуємо регулярні вирази з \b, щоб 'c' не збігалося з кожним словом
+
             pattern = re.escape(kw)
             if re.search(r'\b' + pattern + r'\b', text_clean, re.IGNORECASE) or kw in text_clean:
                 return True
         return False
 
     def _clean_text(self, text: str) -> str:
-        """Декодує HTML-сутності та розчищає зайві пробіли."""
+
         if not text:
             return ""
         decoded = html.unescape(text)
         return " ".join(decoded.split())
 
-    # ==========================================
-    # 1. ТЕЛЕГРАМ-КАНАЛИ (Веб-парсер t.me/s/)
-    # ==========================================
+
     async def parse_telegram_channel(self, session: aiohttp.ClientSession, channel_username: str, category: str) -> \
     List[Dict[str, str]]:
         jobs = []
@@ -96,9 +93,7 @@ class FreelanceService:
                         })
         return jobs
 
-    # ==========================================
-    # 2. УКРАЇНСЬКІ ТА БУДЬ-ЯКІ РЕГІОНАЛЬНІ БІРЖІ
-    # ==========================================
+
     async def parse_freelancehunt(self, session: aiohttp.ClientSession, category: str) -> List[Dict[str, str]]:
         jobs = []
         xml_data = await self._fetch(session, "https://freelancehunt.com/rss/projects")
@@ -197,9 +192,7 @@ class FreelanceService:
                         })
         return jobs
 
-    # ==========================================
-    # 3. МІЖНАРОДНІ API ТА RSS СТРІЧКИ
-    # ==========================================
+
     async def parse_remoteok(self, session: aiohttp.ClientSession, category: str) -> List[Dict[str, str]]:
         jobs = []
         try:
@@ -263,9 +256,6 @@ class FreelanceService:
                 logger.error(f"Jobspresso RSS Error: {e}")
         return jobs
 
-    # ==========================================
-    # 4. ГОЛОВНА ТОЧКА ВХОДУ (Запуск усього)
-    # ==========================================
     async def get_jobs(self, category: str = "all") -> List[Dict[str, str]]:
         async with aiohttp.ClientSession() as session:
             tg_channels = [
@@ -300,5 +290,5 @@ class FreelanceService:
                 elif isinstance(res, Exception):
                     logger.error(f"Task failed with error: {res}")
 
-            # Обрізаємо результати до максимум 15 найсвіжіших вакансій
+
             return all_jobs[:15]

@@ -10,27 +10,27 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 from dotenv import load_dotenv
 
-# 1. Додаємо корень проекту в PATH
+
 sys.path.insert(0, ".")
 
-# 2. Завантажуємо `.env`
+
 load_dotenv()
 
 config = context.config
 
-# 3. Передаємо URL бази даних в Alembic
+
 mysql_url = os.getenv("MYSQL_URL")
 if mysql_url:
-    # Захист на випадок, якщо в .env випадково потрапило "MYSQL_URL="
+
     if mysql_url.startswith("MYSQL_URL="):
         mysql_url = mysql_url.replace("MYSQL_URL=", "", 1)
     config.set_main_option("sqlalchemy.url", mysql_url)
 
-# Налаштування логування
+
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# 4. Імпортуємо метадані твоїх моделей
+
 from app.database.models import Base
 target_metadata = Base.metadata
 

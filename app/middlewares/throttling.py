@@ -7,7 +7,7 @@ from app.locales import TEXTS
 
 class ThrottlingMiddleware(BaseMiddleware):
     def __init__(self, time_limit: float = 1.5):
-        # Кэш хранит ID пользователей в течение time_limit секунд
+
         self.cache = TTLCache(maxsize=10000, ttl=time_limit)
 
     async def __call__(
@@ -24,7 +24,6 @@ class ThrottlingMiddleware(BaseMiddleware):
 
         if user_id:
             if user_id in self.cache:
-                # Спам обнаружен — блокируем обработку
                 if isinstance(event, Message):
                     await event.answer(TEXTS["ru"]["rate_limit_error"])
                 elif isinstance(event, CallbackQuery):
