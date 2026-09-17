@@ -403,88 +403,123 @@ python -m app.main
 
 ## Запуск через Docker
 
-В текущем состоянии репозитория Docker-файлы отсутствуют. Ниже — минимальная конфигурация, которую можно добавить в корень проекта.
 
-### `Dockerfile`
+- `Dockerfile` — сборка образа Telegram-бота;
+- `docker-compose.yml` — запуск бота и MySQL;
+- `.env.example` — шаблон переменных окружения;
+- `.dockerignore` — список файлов, исключённых из Docker-образа.
 
-```dockerfile
-FROM python:3.11-slim
+### 1. Подготовка `.env`
 
-WORKDIR /app
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+Из корня проекта скопируйте шаблон:
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
-
-COPY . .
-CMD ["sh", "-c", "alembic upgrade head && python -m app.main"]
+```bash
+cp .env.example .env
 ```
 
-### `docker-compose.yml`
-
-```yaml
-services:
-  mysql:
-    image: mysql:8.0
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: telegram_bot
-      MYSQL_USER: bot_user
-      MYSQL_PASSWORD: strong_password
-      MYSQL_ROOT_PASSWORD: root_password
-    volumes:
-      - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
-
-  bot:
-    build: .
-    restart: unless-stopped
-    env_file: .env
-    environment:
-      MYSQL_URL: mysql+asyncmy://bot_user:strong_password@mysql:3306/telegram_bot
-    depends_on:
-      mysql:
-        condition: service_healthy
-
-volumes:
-  mysql_data:
-```
-
-`.env` для Docker:
+Откройте `.env` и укажите свои значения:
 
 ```env
-BOT_TOKEN=123456789:replace_with_telegram_token
-GROQ_API_KEY=gsk_replace_with_groq_key
-MYSQL_URL=mysql+asyncmy://bot_user:strong_password@mysql:3306/telegram_bot
+BOT_TOKEN=ваш_токен_от_BotFather
+GROQ_API_KEY=ваш_ключ_Groq
+
+MYSQL_URL=mysql+asyncmy://bot_user:change_me@mysql:3306/telegram_bot
+
+MYSQL_DATABASE=telegram_bot
+MYSQL_USER=bot_user
+MYSQL_PASSWORD=change_me
+MYSQL_ROOT_PASSWORD=change_root_password
 ```
 
-Запуск:
+`BOT_TOKEN` можно получить у [@BotFather](https://t.me/BotFather), а `GROQ_API_KEY` — в [Groq Console](https://console.groq.com/keys).
+
+> Не добавляйте файл `.env` в Git. Он уже добавлен в `.gitignore`.
+
+### 2. Запуск проекта
+
+Запустите Docker Compose:
 
 ```bash
 docker compose up -d --build
+```
+
+Команда:
+
+1. соберёт образ бота из `Dockerfile`;
+2. запустит MySQL 8.0;
+3. дождётся готовности базы данных;
+4. автоматически выполнит миграции Alembic;
+5. запустит Telegram-бота.
+
+### 3. Проверка контейнеров и просмотр логов
+
+Проверить состояние контейнеров:
+
+```bash
+docker compose ps
+```
+
+Посмотреть логи бота:
+
+```bash
 docker compose logs -f bot
 ```
 
-Остановка без удаления данных:
+Посмотреть логи MySQL:
+
+```bash
+docker compose logs -f mysql
+```
+
+### 4. Остановка проекта
+
+Остановить контейнеры без удаления данных базы:
 
 ```bash
 docker compose down
 ```
 
-Полное удаление контейнеров и volume базы:
+Полностью удалить контейнеры и данные MySQL:
 
 ```bash
 docker compose down -v
 ```
 
-> В production не храните пароли MySQL в публичном `docker-compose.yml`; используйте secrets или переменные окружения CI/CD.
+> Команда `docker compose down -v` удаляет volume с базой данных. Используйте её только тогда, когда данные больше не нужны.
 
+### Важно: подключение к MySQL в Docker
+
+Внутри Docker-сети приложение подключается к MySQL по имени сервиса `mysql`:
+
+```env
+MYSQL_URL=mysql+asyncmy://bot_user:change_me@mysql:3306/telegram_bot
+```
+
+Не используйте `localhost` или `127.0.0.1` в `MYSQL_URL` для Docker. Внутри контейнера это адрес самого контейнера бота, а не контейнера MySQL.
+
+### Обновление проекта
+
+После изменения исходного кода или зависимостей пересоберите Docker-образ:
+
+```bash
+docker compose down
+docker compose up -d --build
+docker compose logs -f bot
+```
+
+### Диагностика
+
+Если бот не запускается, проверьте логи:
+
+```bash
+docker compose ps
+docker compose logs bot
+docker compose logs mysql
+```
+
+> В production используйте сложные пароли и не публикуйте `.env`, токен Telegram или ключ Groq.
+
+---
 ---
 
 ## Пользовательский сценарий
