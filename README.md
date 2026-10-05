@@ -660,3 +660,5 @@ alembic current
 - Документация aiogram: [docs.aiogram.dev](https://docs.aiogram.dev/)
 - Документация Groq: [console.groq.com/docs](https://console.groq.com/docs)
 - Документация Alembic: [alembic.sqlalchemy.org](https://alembic.sqlalchemy.org/)
+
+[![Architecture diagram of ghostoraner/bot-assistant-via-telegramm](https://gitdiagram.com/ghostoraner/bot-assistant-via-telegramm/diagram.png)](https://gitdiagram.com/ghostoraner/bot-assistant-via-telegramm?utm_source=readme&utm_medium=picture)
