@@ -6,6 +6,7 @@
 [![aiogram](https://img.shields.io/badge/aiogram-3.10-2CA5E0?logo=telegram&logoColor=white)](https://docs.aiogram.dev/)
 [![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.x-D71F00)](https://www.sqlalchemy.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Architecture diagram](https://gitdiagram.com/diagram-badge.svg)](https://gitdiagram.com/ghostoraner/bot-assistant-via-telegramm?utm_source=readme&utm_medium=badge)
 
 Бот работает в режиме long polling: отдельный HTTP-сервер для webhook не требуется. После запуска он подключается к Telegram, принимает сообщения, обращается к MySQL, внешним freelance-источникам и Groq API, а затем отправляет результат пользователю.
 
@@ -661,4 +662,4 @@ alembic current
 - Документация Groq: [console.groq.com/docs](https://console.groq.com/docs)
 - Документация Alembic: [alembic.sqlalchemy.org](https://alembic.sqlalchemy.org/)
 
-[![Architecture diagram](https://gitdiagram.com/diagram-badge.svg)](https://gitdiagram.com/ghostoraner/bot-assistant-via-telegramm?utm_source=readme&utm_medium=badge)
+[![Architecture diagram of ghostoraner/bot-assistant-via-telegramm](https://gitdiagram.com/ghostoraner/bot-assistant-via-telegramm/diagram.png)](https://gitdiagram.com/ghostoraner/bot-assistant-via-telegramm?utm_source=readme&utm_medium=picture)
